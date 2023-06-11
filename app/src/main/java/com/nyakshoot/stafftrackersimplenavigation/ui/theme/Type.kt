@@ -18,7 +18,7 @@ private val GoogleSans = FontFamily(
 val Typography = Typography(
     h4 = TextStyle(
         fontFamily = GoogleSans,
-        fontWeight = FontWeight.W600,
+        fontWeight = FontWeight.Bold,
         fontSize = 30.sp
     ),
     h5 = TextStyle(

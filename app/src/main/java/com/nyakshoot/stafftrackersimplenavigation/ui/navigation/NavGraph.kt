@@ -10,26 +10,23 @@ import com.google.gson.Gson
 import com.nyakshoot.stafftrackersimplenavigation.data.models.Employee
 import com.nyakshoot.stafftrackersimplenavigation.data.viewmodel.DocumentViewModel
 import com.nyakshoot.stafftrackersimplenavigation.data.viewmodel.EmployeeViewModel
-import com.nyakshoot.stafftrackersimplenavigation.ui.screens.EmployeeScreen
-import com.nyakshoot.stafftrackersimplenavigation.ui.screens.EmployeesScreen
-import com.nyakshoot.stafftrackersimplenavigation.ui.screens.NewEmployeeScreen
-import com.nyakshoot.stafftrackersimplenavigation.ui.screens.NotEmployeesScreen
+import com.nyakshoot.stafftrackersimplenavigation.data.viewmodel.PhotoViewModel
+import com.nyakshoot.stafftrackersimplenavigation.ui.screens.*
 
 @Composable
 fun NavGraph(
     navHostController: NavHostController,
     employeeViewModel: EmployeeViewModel,
-    documentViewModel: DocumentViewModel
+    documentViewModel: DocumentViewModel,
+    photoViewModel: PhotoViewModel
 ) {
     NavHost(navController = navHostController, startDestination = "employees"){
-
-        val gson = Gson()
 
         composable(Screen.Employees.route){
             EmployeesScreen(employeeViewModel, navHostController)
         }
         composable(Screen.NotEmployees.route){
-            NotEmployeesScreen(employeeViewModel)
+            NotEmployeesScreen(employeeViewModel, navHostController)
         }
         composable(Screen.NewEmployee.route){
             NewEmployeeScreen(employeeViewModel)
@@ -41,14 +38,14 @@ fun NavGraph(
         ){
             it.arguments?.getString(Employee.EMPLOYEE)?.let {json ->
                 val employee = Gson().fromJson(json, Employee::class.java)
-                EmployeeScreen(employee = employee, documentViewModel)
+                EmployeeScreen(employee, documentViewModel, photoViewModel)
             }
         }
-        //composable("new_document"){
-        //    NewDocumentScreen()
-        //}
-        //composable("new_photo"){
-        //    NewPhotoScreen()
-        //}
+        composable(Screen.NewDocument.route){
+           NewDocumentScreen()
+        }
+        composable(Screen.NewPhoto.route){
+            NewPhotoScreen()
+        }
     }
 }

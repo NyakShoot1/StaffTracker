@@ -25,24 +25,47 @@ import androidx.compose.ui.unit.sp
 import com.nyakshoot.stafftrackersimplenavigation.R
 import com.nyakshoot.stafftrackersimplenavigation.data.models.Employee
 import com.nyakshoot.stafftrackersimplenavigation.data.viewmodel.DocumentViewModel
+import com.nyakshoot.stafftrackersimplenavigation.data.viewmodel.PhotoViewModel
 import com.nyakshoot.stafftrackersimplenavigation.ui.component.DocumentCard
 import com.nyakshoot.stafftrackersimplenavigation.utils.formatDate
 import okhttp3.HttpUrl
 
 
 @Composable
-fun EmployeeScreen(employee: Employee?, documentViewModel: DocumentViewModel) {
+fun EmployeeScreen(
+    employee: Employee?,
+    documentViewModel: DocumentViewModel,
+    photoViewModel: PhotoViewModel
+) {
     val context = LocalContext.current
 
     val state by documentViewModel.documents.collectAsState()
+
+    val state2 by photoViewModel.photos.collectAsState()
 
     val list = remember {
         mutableStateOf(documentViewModel.documents.value)
     }
 
+    val list2 = remember {
+        mutableStateOf(photoViewModel.photos.value)
+    }
+
+    val selectedMenuState = remember {
+        mutableStateOf(false)
+    }
+
+    var employeeStatus = ""
+    employeeStatus = if (employee!!.status)
+        "Действуйщий сотрудник"
+    else
+        "Уволен"
+
     LaunchedEffect(Unit) {
-        documentViewModel.getEmployeeDocuments(employee!!.employee_id.toString())
+        documentViewModel.getEmployeeDocuments(employee.employee_id.toString())
+        photoViewModel.getEmployeePhoto(employee.employee_id.toString())
         list.value = state
+        list2.value = state2
     }
 
     Column(
@@ -62,30 +85,30 @@ fun EmployeeScreen(employee: Employee?, documentViewModel: DocumentViewModel) {
             Row() {
                 EmployeeInfoText(
                     iconId = R.drawable.baseline_account_circle_24,
-                    info = employee!!.full_name
+                    info = employee.full_name
                 )
             }
             Row() {
                 EmployeeInfoText(
                     iconId = R.drawable.baseline_cake_24,
-                    info = formatDate(employee!!.birthday)
+                    info = formatDate(employee.birthday)
                 )
             }
             Row() {
                 EmployeeInfoText(
                     iconId = R.drawable.baseline_apartment_24,
-                    info = employee!!.department
+                    info = employee.department
                 )
             }
             Row() {
                 EmployeeInfoText(
                     iconId = R.drawable.baseline_work_outline_24,
-                    info = employee!!.post
+                    info = employee.post
                 )
             }
             Row() {
                 androidx.compose.material3.Text(
-                    text = "Принят(а): " + formatDate(employee!!.hire_date),
+                    text = "Принят(а): " + formatDate(employee.hire_date),
                     color = Color.White,
                     fontFamily = FontFamily(Font(R.font.google_sans_bold)),
                     modifier = Modifier.padding(start = 2.dp),
@@ -94,12 +117,23 @@ fun EmployeeScreen(employee: Employee?, documentViewModel: DocumentViewModel) {
             }
             Row() {
                 androidx.compose.material3.Text(
-                    text = "Статус: Действуйщий сотрудник",
+                    text = "Статус: $employeeStatus",
                     color = Color.White,
                     fontFamily = FontFamily(Font(R.font.google_sans_bold)),
                     modifier = Modifier.padding(start = 2.dp),
                     fontSize = 18.sp
                 )
+            }
+            if (!employee.status) {
+                Row() {
+                    androidx.compose.material3.Text(
+                        text = "Дата увольнения: " + formatDate(employee.fire_date),
+                        color = Color.White,
+                        fontFamily = FontFamily(Font(R.font.google_sans_bold)),
+                        modifier = Modifier.padding(start = 2.dp),
+                        fontSize = 18.sp
+                    )
+                }
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
@@ -113,29 +147,55 @@ fun EmployeeScreen(employee: Employee?, documentViewModel: DocumentViewModel) {
                 .padding(10.dp),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.baseline_folder_24),
-                contentDescription = "",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .padding(0.dp)
-                    .size(48.dp)
-                    .clickable {
-
-                    },
-                colorFilter = ColorFilter.tint(color = Color.White)
-            )
-            Image(
-                painter = painterResource(id = R.drawable.baseline_image_24),
-                contentDescription = "",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .padding(0.dp)
-                    .size(48.dp)
-                    .clickable {
-
-                    }
-            )
+            if (!selectedMenuState.value) {
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_folder_24),
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .padding(0.dp)
+                        .size(48.dp)
+                        .clickable {
+                            selectedMenuState.value = false
+                        },
+                    colorFilter = ColorFilter.tint(color = Color.White)
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_image_24),
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .padding(0.dp)
+                        .size(48.dp)
+                        .clickable {
+                            selectedMenuState.value = true
+                        }
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_folder_24),
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .padding(0.dp)
+                        .size(48.dp)
+                        .clickable {
+                            selectedMenuState.value = false
+                        }
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.baseline_image_24),
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .padding(0.dp)
+                        .size(48.dp)
+                        .clickable {
+                            selectedMenuState.value = true
+                        },
+                    colorFilter = ColorFilter.tint(color = Color.White)
+                )
+            }
         }
         LazyColumn(
             modifier = Modifier
@@ -143,13 +203,24 @@ fun EmployeeScreen(employee: Employee?, documentViewModel: DocumentViewModel) {
                 .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            items(state) { document ->
-                DocumentCard(
-                    document_name = document.document_name,
-                    document_date = formatDate(document.document_date)
-                ) {
-                    Log.d("penis_employee_Screen", document.document_url)
-                    documentViewModel.loadDocument(document, context)
+            if (!selectedMenuState.value) {
+                items(state) { document ->
+                    DocumentCard(
+                        document_name = document.document_name,
+                        document_date = formatDate(document.document_date)
+                    ) {
+                        documentViewModel.loadDocument(document, context)
+                    }
+                }
+            }
+            else{
+                items(state2) { photo ->
+                    DocumentCard(
+                        document_name = photo.photo_name,
+                        document_date = formatDate(photo.photo_date)
+                    ) {
+                        photoViewModel.loadPhoto(photo, context)
+                    }
                 }
             }
         }

@@ -7,53 +7,42 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nyakshoot.stafftrackersimplenavigation.data.api.ApiHelper
 import com.nyakshoot.stafftrackersimplenavigation.data.models.Document
+import com.nyakshoot.stafftrackersimplenavigation.data.models.Photo
 import com.nyakshoot.stafftrackersimplenavigation.utils.saveFile
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
 
-class DocumentViewModel(private val apiHelper: ApiHelper) : ViewModel() {
-    private val _documents = MutableStateFlow<List<Document>>(emptyList())
-    val documents: StateFlow<List<Document>> = _documents
-
+class PhotoViewModel (private val apiHelper: ApiHelper) : ViewModel(){
+    private val _photos = MutableStateFlow<List<Photo>>(emptyList())
+    val photos: StateFlow<List<Photo>> = _photos
 
     private val env =
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
-    fun getEmployeeDocuments(employeeId: String) {
+    fun getEmployeePhoto(employeeId: String) {
         viewModelScope.launch {
             try {
-                val documents = apiHelper.getEmployeeDocuments(employeeId)
-                _documents.tryEmit(documents)
+                val photos = apiHelper.getEmployeePhotos(employeeId)
+                _photos.tryEmit(photos)
             } catch (e: Exception) {
-                Log.e("getEmployees", "Error fetching data", e)
+                Log.e("getEmployeePhoto", "Error fetching data", e)
             }
         }
     }
 
-    fun loadDocument(document: Document, context: Context) {
+    fun loadPhoto(photo: Photo, context: Context) {
         viewModelScope.launch {
             try {
-                val responseBody = apiHelper.loadDocument(document.document_url).body()
+                val responseBody = apiHelper.loadPhoto(photo.photo_url).body()
                 Log.d("Penis_document_view_model", responseBody.toString())
                 saveFile(
                     responseBody,
                     env.toString(),
-                    document.document_name,
-                    document.document_url,
+                    photo.photo_name,
+                    photo.photo_url,
                     context
                 )
-            } catch (e: Exception) {
-                Log.e("loadDocument", "Ошибка при загрузке документа", e)
-            }
-        }
-    }
-
-    fun uploadDocument(documentName: String, file: MultipartBody.Part){
-        viewModelScope.launch {
-            try {
-                apiHelper.uploadDocument(documentName, file)
             } catch (e: Exception) {
                 Log.e("uploadDocument", "Ошибка при загрузке документа", e)
             }

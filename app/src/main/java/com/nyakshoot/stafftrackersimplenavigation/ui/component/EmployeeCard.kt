@@ -38,7 +38,7 @@ fun EmployeeCard(employee : Employee, onClickStartEmployeeScreen: () -> Unit) {
         Box() {
             Row() {
                 Column(
-                    modifier = Modifier.padding(5.dp),
+                    modifier = Modifier.padding(5.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
@@ -98,8 +98,7 @@ fun EmployeeCard(employee : Employee, onClickStartEmployeeScreen: () -> Unit) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    horizontalAlignment = Alignment.End,
-                    verticalArrangement = Arrangement.Bottom
+                    horizontalAlignment = Alignment.End
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24),

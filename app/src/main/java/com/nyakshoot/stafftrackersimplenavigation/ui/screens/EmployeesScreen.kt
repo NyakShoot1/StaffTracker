@@ -20,14 +20,14 @@ fun EmployeesScreen(employeeViewModel: EmployeeViewModel, navHostController: Nav
 
     val gson = Gson()
 
-    val state by employeeViewModel.employees.collectAsState()
+    val state by employeeViewModel.employeesActive.collectAsState()
 
     val list = remember {
-        mutableStateOf(employeeViewModel.employees.value)
+        mutableStateOf(employeeViewModel.employeesActive.value)
     }
 
     LaunchedEffect(Unit) {
-        employeeViewModel.getEmployees()
+        employeeViewModel.getActiveEmployees()
         list.value = state
     }
     Box(
