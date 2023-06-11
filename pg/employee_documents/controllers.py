@@ -1,6 +1,5 @@
-from flask import request, jsonify
+from flask import jsonify
 
-from __init__ import db
 from .models import Employee_document
 from ..documents.models import Document
 

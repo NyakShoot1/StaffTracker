@@ -17,7 +17,11 @@ from _minio.documents.urls import *
 from pg.employees.urls import *
 from pg.documents.urls import *
 from pg.employee_documents.urls import *
+from pg.template_documents.urls import *
+from pg.admins.urls import *
+from pg.photos.urls import *
 
 if __name__ == "__main__":
-    app.run()
-    #app.run(host='10.147.19.177', port=5000)
+    # app.run()
+    # app.run(host='10.147.19.177', port=5000, ssl_context="adhoc")
+    app.run(host='10.147.19.177', port=5000)

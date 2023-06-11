@@ -1,6 +1,4 @@
-from sqlalchemy import inspect, Integer, Text, Date, Boolean, Sequence
-#from flask_validator import ValidateEmail, ValidateString, ValidateCountry
-from sqlalchemy.orm import validates
+from sqlalchemy import inspect, Integer, Text, Date, Boolean
 
 from __init__ import db  # from __init__.py
 
@@ -16,6 +14,7 @@ class Employee(db.Model):
     status = db.Column(db.Boolean)
 
     employee_document = db.relationship("Employee_document", back_populates="employee")
+    photo = db.relationship("Photo", back_populates="employee")
 
     def toDict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}

@@ -1,6 +1,4 @@
 from sqlalchemy import inspect, Integer, Text, Date, Boolean
-# from flask_validator import ValidateEmail, ValidateString, ValidateCountry
-from sqlalchemy.orm import validates
 
 from __init__ import db  # from __init__.py
 
