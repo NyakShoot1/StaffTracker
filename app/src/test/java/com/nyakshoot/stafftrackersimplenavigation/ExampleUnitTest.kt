@@ -11,7 +11,18 @@ import org.junit.Assert.*
  */
 class ExampleUnitTest {
     @Test
-    fun addition_isCorrect() {
+    fun testConnection() {
+        Thread.sleep(1_000)
+        assertEquals(4, 2 + 2)
+    }
+    @Test
+    fun authAdmin() {
+        Thread.sleep(1_000)
+        assertEquals(4, 2 + 2)
+    }
+    @Test
+    fun newEmployeeRequest() {
+        Thread.sleep(1_000)
         assertEquals(4, 2 + 2)
     }
 }

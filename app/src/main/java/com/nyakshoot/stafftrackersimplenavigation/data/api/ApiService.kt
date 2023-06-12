@@ -1,5 +1,7 @@
 package com.nyakshoot.stafftrackersimplenavigation.data.api
 
+import com.nyakshoot.stafftrackersimplenavigation.data.models.Admin
+import com.nyakshoot.stafftrackersimplenavigation.data.models.AdminResponse
 import com.nyakshoot.stafftrackersimplenavigation.data.models.Document
 import com.nyakshoot.stafftrackersimplenavigation.data.models.Employee
 import com.nyakshoot.stafftrackersimplenavigation.data.models.NewEmployee
@@ -10,6 +12,9 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface ApiService {
+    @POST("/login")
+    suspend fun login(@Body admin: Admin): AdminResponse
+
     @POST("/employees")
     suspend fun newEmployee(@Body employee: NewEmployee)
 

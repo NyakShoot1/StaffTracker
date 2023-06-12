@@ -1,5 +1,7 @@
 package com.nyakshoot.stafftrackersimplenavigation.ui.screens
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -9,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -17,9 +20,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.nyakshoot.stafftrackersimplenavigation.R
+import com.nyakshoot.stafftrackersimplenavigation.data.models.Admin
+import com.nyakshoot.stafftrackersimplenavigation.data.viewmodel.AuthViewModel
+import kotlinx.coroutines.delay
 
 @Composable
-fun LoginScreen(onClickStartMainActivity: () -> Unit){
+fun LoginScreen(authViewModel: AuthViewModel, onClickStartMainActivity: () -> Unit) {
+    val authState by authViewModel.authState.collectAsState()
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -45,10 +53,10 @@ fun LoginScreen(onClickStartMainActivity: () -> Unit){
             mutableStateOf(TextFieldValue)
         }
 
-        var text by remember { mutableStateOf(TextFieldValue("")) }
+        var login by remember { mutableStateOf(TextFieldValue("")) }
         TextField(
             modifier = Modifier.padding(bottom = 10.dp),
-            value = text,
+            value = login,
             textStyle = TextStyle(fontSize = 32.sp),
             placeholder = {
                 Text(
@@ -58,7 +66,7 @@ fun LoginScreen(onClickStartMainActivity: () -> Unit){
                 )
             },
             onValueChange = {
-                text = it
+                login = it
             },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color.White,
@@ -68,9 +76,9 @@ fun LoginScreen(onClickStartMainActivity: () -> Unit){
             )
         )
 
-        var text2 by remember { mutableStateOf(TextFieldValue("")) }
+        var password by remember { mutableStateOf(TextFieldValue("")) }
         TextField(
-            value = text2,
+            value = password,
             textStyle = TextStyle(fontSize = 32.sp),
             placeholder = {
                 Text(
@@ -80,7 +88,7 @@ fun LoginScreen(onClickStartMainActivity: () -> Unit){
                 )
             },
             onValueChange = {
-                text2 = it
+                password = it
             },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color.White,
@@ -96,8 +104,11 @@ fun LoginScreen(onClickStartMainActivity: () -> Unit){
                 .width(276.dp),
             shape = RoundedCornerShape(10.dp),
             onClick = {
-                //your onclick code here
-                onClickStartMainActivity()
+                authViewModel.login(Admin(login.text, password.text))
+                if (authState.message != "")
+                    onClickStartMainActivity()
+                else if (authState.error != "")
+                    Toast.makeText(context, "Ошибка авторизации", Toast.LENGTH_SHORT).show()
             },
             elevation = ButtonDefaults.elevation(
                 defaultElevation = 10.dp,

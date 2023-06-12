@@ -1,6 +1,7 @@
 package com.nyakshoot.stafftrackersimplenavigation.data.api
 
 import com.google.gson.JsonObject
+import com.nyakshoot.stafftrackersimplenavigation.data.models.Admin
 import com.nyakshoot.stafftrackersimplenavigation.data.models.NewEmployee
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -8,6 +9,8 @@ import retrofit2.http.Body
 import java.io.File
 
 class ApiHelper(private val apiService: ApiService) {
+
+    suspend fun login(admin: Admin) = apiService.login(admin)
 
     suspend fun newEmployee(employee: NewEmployee) = apiService.newEmployee(employee)
 
